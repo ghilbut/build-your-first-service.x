@@ -28,16 +28,14 @@ jobs:
           ${{ runner.os }}-yarn-
 
     - name: Install Packages
-      with:
-        working-directory: './vue.js'
+      working-directory: './vue.js'
       run: |
         pwd
         ls -al
         yarn install
 
     - name: Build
-      with:
-        working-directory: './vue.js'
+      working-directory: './vue.js'
       run: |
         pwd
         ls -al
@@ -47,9 +45,8 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: "${{ secrets.BYFS_LOCAL_S3_WEBHOSTING_ACCESS_KEY }}"
         AWS_SECRET_ACCESS_KEY: "${{ secrets.BYFS_LOCAL_S3_WEBHOSTING_SECRET_KEY }}"
-      with:
-        working-directory: './vue.js'
+      working-directory: './vue.js'
       run: |
         aws s3 sync \
           --acl public-read \
-          ./vue.js/dist s3://byfs-local.ghilbut.com
+          ./dist s3://byfs-local.ghilbut.com
