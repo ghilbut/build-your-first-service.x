@@ -6,6 +6,7 @@ on:
       - develop
       - 'Issue-**'
     paths:
+      - '.github/workflows/local-www-deploy.yml'
       - 'vue.js/**'
 
 jobs:
@@ -14,6 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - run: |
+        echo ${{ GITHUB_WORKFLOW }}
+
     - uses: actions/checkout@v2
       with:
         ref: Issue-3
