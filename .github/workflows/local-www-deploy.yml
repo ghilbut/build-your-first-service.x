@@ -16,7 +16,7 @@ jobs:
 
     steps:
     - run: |
-        echo ${{ GITHUB_WORKFLOW }}
+        echo $GITHUB_WORKFLOW
 
     - uses: actions/checkout@v2
       with:
