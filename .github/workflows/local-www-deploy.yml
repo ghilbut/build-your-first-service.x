@@ -31,12 +31,14 @@ jobs:
       working-directory: ./vue.js
       run: |
         pwd
+        ls -al
         yarn install
 
     - name: Build
       working-directory: ./vue.js
       run: |
         pwd
+        ls -al
         yarn build
 
     - name: deploy
