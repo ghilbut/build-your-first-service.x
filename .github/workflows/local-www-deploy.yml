@@ -3,7 +3,10 @@ name: Deploy web frontend to local stage
 on:
   push:
     branches: 
-      - Issue-3
+      - develop
+      - Issue-**
+    paths:
+      - 'vue.js/**'
 
 jobs:
   build:
