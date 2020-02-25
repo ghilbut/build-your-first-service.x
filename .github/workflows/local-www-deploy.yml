@@ -29,11 +29,15 @@ jobs:
 
     - name: Install Packages
       working-directory: ./vue.js
-      run: yarn install
+      run: |
+        pwd
+        yarn install
 
     - name: Build
       working-directory: ./vue.js
-      run: yarn build
+      run: |
+        pwd
+        yarn build
 
     - name: deploy
       env:
