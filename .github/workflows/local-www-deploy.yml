@@ -28,7 +28,6 @@ jobs:
           ${{ runner.os }}-yarn-
 
     - name: Install Packages
-      working-directory: ./vue.js
       run: yarn install
 
     - name: Build
@@ -38,7 +37,6 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: "${{ secrets.BYFS_LOCAL_S3_WEBHOSTING_ACCESS_KEY }}"
         AWS_SECRET_ACCESS_KEY: "${{ secrets.BYFS_LOCAL_S3_WEBHOSTING_SECRET_KEY }}"
-      working-directory: ./vue.js
       run: |
         aws s3 sync \
           --acl public-read \
