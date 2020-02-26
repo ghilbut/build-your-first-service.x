@@ -1,0 +1,7 @@
+# editors
+*.sw?
+.idea
+.vscode
+
+# mac
+.DS_Store
