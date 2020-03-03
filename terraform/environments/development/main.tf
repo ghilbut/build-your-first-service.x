@@ -7,6 +7,69 @@ locals {
 }
 
 
+################################################################
+##
+##  logical database for stage
+##
+
+data terraform_remote_state mysql {
+  backend   = "s3"
+  workspace = "default"
+
+  config = {
+    bucket  = "byfs-terraform"
+    key     = "databases.tfstate"
+
+    profile = "byfs-terraform"
+    region  = "ap-northeast-2"
+    encrypt = true
+  }
+}
+
+
+output endpoint {
+  value = data.terraform_remote_state.mysql.outputs.mysql_development_endpoint
+}
+#output username {
+#  value = data.terraform_remote_state.mysql.mysql_username
+#}
+#output password {
+#  value = data.terraform_remote_state.mysql.mysql_password
+#}
+
+
+provider mysql {
+  endpoint = data.terraform_remote_state.mysql.outputs.mysql_development_endpoint
+  username = data.terraform_remote_state.mysql.outputs.mysql_username
+  password = data.terraform_remote_state.mysql.outputs.mysql_password
+}
+
+
+resource mysql_database default {
+  default_character_set = "utf8mb4"
+  default_collation     = "utf8mb4_unicode_ci"
+  name                  = var.db_name
+}
+
+resource mysql_user default {
+  user               = var.db_username
+  host               = "%"
+  plaintext_password = var.db_password
+}
+
+resource mysql_grant default {
+  user       = mysql_user.default.user
+  host       = mysql_user.default.host
+  database   = mysql_database.default.name
+  privileges = ["ALL"]
+}
+
+
+################################################################
+##
+##  SPA hosting
+##
+/*
 resource aws_s3_bucket www {
   bucket = "${var.www_domain}"
   acl    = "public-read"
@@ -83,3 +146,4 @@ resource aws_route53_record www {
     evaluate_target_health = true
   }
 }
+*/
