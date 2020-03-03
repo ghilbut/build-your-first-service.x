@@ -3,8 +3,8 @@ terraform {
 
   backend "s3" {
     # s3://<bucket>/<workspace_key_prefix>/<workspace-name>/<key>
-    bucket               = "byfs-terraform"
-    key                  = "databases.tfstate"
+    bucket         = "byfs-terraform"
+    key            = "databases.tfstate"
 
     profile        = "byfs-terraform"
     region         = "ap-northeast-2"
