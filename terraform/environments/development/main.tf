@@ -11,7 +11,7 @@ locals {
 ##
 ##  logical database for stage
 ##
-
+/*
 data terraform_remote_state mysql {
   backend   = "s3"
   workspace = "default"
@@ -25,17 +25,6 @@ data terraform_remote_state mysql {
     encrypt = true
   }
 }
-
-
-output endpoint {
-  value = data.terraform_remote_state.mysql.outputs.mysql_development_endpoint
-}
-#output username {
-#  value = data.terraform_remote_state.mysql.mysql_username
-#}
-#output password {
-#  value = data.terraform_remote_state.mysql.mysql_password
-#}
 
 
 provider mysql {
@@ -63,6 +52,7 @@ resource mysql_grant default {
   database   = mysql_database.default.name
   privileges = ["ALL"]
 }
+*/
 
 
 ################################################################
@@ -127,12 +117,6 @@ EOF
 
 resource aws_iam_access_key github {
   user = aws_iam_user.hosting.name
-}
-
-
-data aws_route53_zone public {
-  name         = var.root_domain
-  private_zone = false
 }
 
 resource aws_route53_record www {
