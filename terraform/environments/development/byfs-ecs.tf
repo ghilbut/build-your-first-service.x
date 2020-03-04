@@ -184,6 +184,8 @@ resource aws_ecs_service django {
   network_configuration {
     subnets          = data.aws_subnet.defaults.*.id
     security_groups  = [aws_security_group.django.id]
+
+    # if you has NAT, disable
     assign_public_ip = true
   }
 
