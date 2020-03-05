@@ -1,5 +1,5 @@
 {
-  "familiy": "ecs-byfs-development-task-definition",
+  "family": "ecs-byfs-development-task-definition",
   "executionRoleArn": "arn:aws:iam::869061964712:role/iam-role-byfs-ecs-execution",
   "networkMode": "awsvpc",
   "containerDefinitions": [
