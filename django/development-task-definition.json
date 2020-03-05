@@ -14,7 +14,7 @@
         }
       ],
       "entryPoint": ["./manage.py", "runserver", "0:80"],
-      "environment": [{"name":"DJANGO_SETTINGS_MODULE","valueFrom":"byfs.settings.develop"}],
+      "environment": [{"name":"DJANGO_SETTINGS_MODULE","value":"byfs.settings.develop"}],
       "secrets": [{"name":"BYFS_DB_DEVELOP_HOST","valueFrom":"arn:aws:secretsmanager:ap-northeast-2:869061964712:secret:byfs-development-mysql-host-vz3LKC"},{"name":"BYFS_DB_DEVELOP_PORT","valueFrom":"arn:aws:secretsmanager:ap-northeast-2:869061964712:secret:byfs-development-mysql-port-eyuJ1e"},{"name":"BYFS_DB_DEVELOP_NAME","valueFrom":"arn:aws:secretsmanager:ap-northeast-2:869061964712:secret:byfs-development-mysql-name-JCXVCf"},{"name":"BYFS_DB_DEVELOP_USER","valueFrom":"arn:aws:secretsmanager:ap-northeast-2:869061964712:secret:byfs-development-mysql-username-Bwmd8c"},{"name":"BYFS_DB_DEVELOP_PASSWORD","valueFrom":"arn:aws:secretsmanager:ap-northeast-2:869061964712:secret:byfs-development-mysql-password-1qAaea"}]
     }
   ],
