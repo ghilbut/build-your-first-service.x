@@ -10,10 +10,10 @@
       "portMappings": [
         {
           "protocol": "tcp",
-          "containerPort": 8000
+          "containerPort": 80
         }
       ],
-      "entryPoint": ["./manage.py", "runserver", "0:8000"]
+      "entryPoint": ["./manage.py", "runserver", "0:80"]
     }
   ],
   "requiresCompatibilities": [
