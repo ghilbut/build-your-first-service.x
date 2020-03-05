@@ -51,7 +51,7 @@ resource aws_lb django {
 
 resource aws_lb_target_group django {
   name     = "alb-byfs-django"
-  port     = 80
+  port     = 8000
   protocol = "HTTP"
   vpc_id   = data.aws_vpc.default.id
   target_type = "ip"
@@ -113,6 +113,128 @@ resource aws_route53_record django {
 
 
 
+resource aws_secretsmanager_secret mysql_host {
+  name = "byfs-${terraform.workspace}-mysql-host"
+}
+
+resource aws_secretsmanager_secret_version mysql_host {
+  secret_id     = aws_secretsmanager_secret.mysql_host.id
+  secret_string = var.mysql_address
+}
+
+resource aws_secretsmanager_secret mysql_name {
+  name = "byfs-${terraform.workspace}-mysql-name"
+}
+
+resource aws_secretsmanager_secret_version mysql_name {
+  secret_id     = aws_secretsmanager_secret.mysql_name.id
+  secret_string = "development"
+}
+
+resource aws_secretsmanager_secret mysql_port {
+  name = "byfs-${terraform.workspace}-mysql-port"
+}
+
+resource aws_secretsmanager_secret_version mysql_port {
+  secret_id     = aws_secretsmanager_secret.mysql_port.id
+  secret_string = "3306"
+}
+
+resource aws_secretsmanager_secret mysql_username {
+  name = "byfs-${terraform.workspace}-mysql-username"
+}
+
+resource aws_secretsmanager_secret_version mysql_username {
+  secret_id     = aws_secretsmanager_secret.mysql_username.id
+  secret_string = var.mysql_username
+}
+
+resource aws_secretsmanager_secret mysql_password {
+  name = "byfs-${terraform.workspace}-mysql-password"
+}
+
+resource aws_secretsmanager_secret_version mysql_password {
+  secret_id     = aws_secretsmanager_secret.mysql_password.id
+  secret_string = var.mysql_password
+}
+
+locals {
+  environments = [
+    {
+      "name": "DJANGO_SETTINGS_MODULE",
+      "value": "byfs.settings.develop"
+    }
+  ]
+
+  secrets = [
+    {
+      "name": "BYFS_DB_DEVELOP_HOST",
+      "valueFrom": aws_secretsmanager_secret.mysql_host.arn
+    },
+    {
+      "name": "BYFS_DB_DEVELOP_PORT",
+      "valueFrom": aws_secretsmanager_secret.mysql_port.arn
+    },
+    {
+      "name": "BYFS_DB_DEVELOP_NAME",
+      "valueFrom": aws_secretsmanager_secret.mysql_name.arn
+    },
+    {
+      "name": "BYFS_DB_DEVELOP_USER",
+      "valueFrom": aws_secretsmanager_secret.mysql_username.arn
+    },
+    {
+      "name": "BYFS_DB_DEVELOP_PASSWORD",
+      "valueFrom": aws_secretsmanager_secret.mysql_password.arn
+    }
+  ]
+}
+
+data template_file task_definition {
+  template = <<EOF
+{
+  "family": "ecs-byfs-development-task-definition",
+  "executionRoleArn": "arn:aws:iam::869061964712:role/iam-role-byfs-ecs-execution",
+  "networkMode": "awsvpc",
+  "containerDefinitions": [
+    {
+      "name": "django",
+      "image": "ghilbut/byfs",
+      "essential": true,
+      "portMappings": [
+        {
+          "protocol": "tcp",
+          "containerPort": 8000
+        }
+      ],
+      "entryPoint": ["./manage.py", "runserver", "0:8000"],
+      "environment": $${environments},
+      "secrets": $${secrets}
+    }
+  ],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "512"
+}
+EOF
+
+  vars = {
+    environments = jsonencode(local.environments)
+    secrets = jsonencode(local.secrets)
+  }
+}
+
+resource local_file task_definition {
+  sensitive_content = data.template_file.task_definition.rendered
+  filename = "${path.module}/../../../django/${terraform.workspace}-task-definition.json"
+}
+
+
+
+
+
 resource aws_ecs_cluster byfs {
   name               = "ecs-byfs"
   capacity_providers = [
@@ -152,12 +274,19 @@ resource aws_ecs_task_definition django {
 [
   {
     "name": "django",
-    "image": "nginx:latest",
+    "image": "ghilbut/byfs:latest",
     "essential": true,
     "portMappings": [
       {
         "protocol": "tcp",
-        "containerPort": 80
+        "containerPort": 8000
+      }
+    ],
+    "entryPoint": ["./manage.py", "runserver", "0:8000"],
+    "environment": [
+      {
+        "name": "DJANGO_SETTINGS_MODULE",
+        "value": "byfs.settings.develop"
       }
     ]
   }
@@ -192,7 +321,7 @@ resource aws_ecs_service django {
   load_balancer {
     target_group_arn = aws_lb_target_group.django.id
     container_name   = "django"
-    container_port   = 80
+    container_port   = 8000
   }
 
   deployment_controller {
@@ -220,4 +349,35 @@ data "aws_iam_policy_document" "assume_role_policy" {
 resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
   role       = aws_iam_role.ecsTaskExecutionRole.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+
+# https://aws.amazon.com/ko/premiumsupport/knowledge-center/ecs-data-security-container-task/
+resource aws_iam_policy secret_access_policy {
+  name        = "test-policy"
+  description = "A test policy"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ssm:GetParameters",
+        "secretsmanager:GetSecretValue"
+      ],
+      "Resource": [
+        "arn:aws:ssm:ap-northeast-2:*:parameter/*",
+        "arn:aws:secretsmanager:ap-northeast-2:*:secret:*"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "secrets" {
+  role       = aws_iam_role.ecsTaskExecutionRole.name
+  policy_arn = aws_iam_policy.secret_access_policy.arn
 }

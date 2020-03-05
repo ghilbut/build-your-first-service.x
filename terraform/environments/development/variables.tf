@@ -18,6 +18,14 @@ variable www_domain {
   type = string
 }
 
+variable mysql_address {
+  type = string
+}
+
+variable mysql_port {
+  type = string
+}
+
 variable mysql_endpoint {
   type = string
 }
