@@ -38,6 +38,6 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: byfs-django
-        cluster: ecs-byfs-development-service
+        service: ecs-byfs-development-service
+        cluster: ecs-byfs
         wait-for-service-stability: true
