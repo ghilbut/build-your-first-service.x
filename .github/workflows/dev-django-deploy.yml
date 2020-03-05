@@ -6,6 +6,7 @@ on:
       - Issue-*
     paths:
       - .github/workflows/dev-django-deploy.yml
+      - .github/workflows/task-definition.json
       - django/**
 
 jobs:
