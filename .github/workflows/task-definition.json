@@ -16,8 +16,28 @@
       "entryPoint": ["./manage.py", "runserver", "0:80"],
       "environment": [
         {
+          "name": "BYFS_DB_DEVELOP_HOST",
+          "value": "byfs-dev.db.ghilbut.com"
+        },
+        {
+          "name": "BYFS_DB_DEVELOP_NAME",
+          "value": "development"
+        },
+        {
+          "name": "BYFS_DB_DEVELOP_PASSWORD",
+          "value": "byfspw00-dev"
+        },
+        {
+          "name": "BYFS_DB_DEVELOP_PORT",
+          "value": "3306"
+        },
+        {
+          "name": "BYFS_DB_DEVELOP_USER",
+          "value": "byfs-dev"
+        },
+        {
           "name": "DJANGO_SETTINGS_MODULE",
-          "value": "byfs.settings.local"
+          "value": "byfs.settings.develop"
         }
       ]
     }
