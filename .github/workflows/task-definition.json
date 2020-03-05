@@ -5,7 +5,8 @@
     "essential": true,
     "portMappings": [
       {
-        "protocol": "tcp", "containerPort": 8000 
+        "protocol": "tcp",
+        "containerPort": 8000
       }
     ],
     "entryPoint": ["./manage.py", "runserver", "0:8000"]
