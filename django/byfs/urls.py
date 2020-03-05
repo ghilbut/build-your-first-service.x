@@ -19,3 +19,24 @@ from django.urls import path
 urlpatterns = [
     path('admin/', admin.site.urls),
 ]
+
+
+
+from django.http import HttpResponse
+
+def index(request):
+    import os
+    err = 'error'
+    v = {
+      'DJANGO_SETTINGS_MODULE': os.environ.get('DJANGO_SETTINGS_MODULE', err),
+      'BYFS_DB_DEVELOP_HOST': os.environ.get('BYFS_DB_DEVELOP_HOST', err),
+      'BYFS_DB_DEVELOP_PORT': os.environ.get('BYFS_DB_DEVELOP_PORT', err),
+      'BYFS_DB_DEVELOP_NAME': os.environ.get('BYFS_DB_DEVELOP_NAME', err),
+      'BYFS_DB_DEVELOP_USER': os.environ.get('BYFS_DB_DEVELOP_USER', err),
+      'BYFS_DB_DEVELOP_PASSWORD': os.environ.get('BYFS_DB_DEVELOP_PASSWORD', err),
+    }
+    import json
+    v = json.dumps(v, indent=2, sort_keys=True)
+    return HttpResponse("Hello, world. You're at the polls index.<br/><br/>" + v)
+
+urlpatterns.append(path('hello/', index, name='hello'))
