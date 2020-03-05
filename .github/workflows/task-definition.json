@@ -1,4 +1,7 @@
 {
+  "familiy": "ecs-byfs-development-task-definition",
+  "executionRoleArn": "arn:aws:iam::869061964712:role/iam-role-byfs-ecs-execution",
+  "networkMode": "awsvpc",
   "containerDefinitions": [
     {
       "name": "django",
@@ -12,5 +15,10 @@
       ],
       "entryPoint": ["./manage.py", "runserver", "0:8000"]
     }
-  ]
+  ],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "256",
+  "memory": "512"
 }
